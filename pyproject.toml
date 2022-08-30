@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "pipeline-data-app"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+authors = ["Justin Louie <224840+nitsujri@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[tool.poetry.scripts]
+pipeline-data-app = 'pipeline_data_app:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
