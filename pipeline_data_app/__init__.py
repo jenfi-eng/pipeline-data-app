@@ -1,6 +1,7 @@
-__version__ = '0.1.0'
+__version__ = "0.1.0"
 
-from .test_run import add_five
+from .app import Application
 
-def main():
-    print(add_five(10))
+PipelineDataApp = Application()
+
+PipelineDataApp.boot()
