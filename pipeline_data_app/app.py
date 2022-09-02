@@ -100,7 +100,7 @@ class Application(object):
 
     def write_result(self, result):
         with open(self.tmp_filepath(self.RESULT_FILENAME), "w") as f:
-            json.dump(result, f, cls=NpEncoder, ignore_nan=True, default=str)
+            json.dump(result, f, cls=NpEncoder, default=str)
 
     def load_result(self):
         with open(self.tmp_filepath(self.RESULT_FILENAME), "r") as result:
