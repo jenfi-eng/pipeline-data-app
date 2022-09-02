@@ -2,7 +2,7 @@ import os
 import platform
 import tempfile
 from pathlib import Path
-import simplejson as json
+import json
 import numpy as np
 import pandas as pd
 
@@ -89,6 +89,14 @@ class Application(object):
         #     pass
 
         return pd.read_sql(query_str, self.db_engine)
+
+    def write_model(pickel, pickel_name):
+        # Upload Model => S3
+        pass
+
+    def load_model(pickel, pickel_name):
+        # Model => S3 => Download Model
+        pass
 
     def write_result(self, result):
         with open(self.tmp_filepath(self.RESULT_FILENAME), "w") as f:

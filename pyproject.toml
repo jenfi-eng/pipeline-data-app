@@ -7,7 +7,6 @@ authors = ["Justin Louie <224840+nitsujri@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-simplejson = "^3.17.6"
 SQLAlchemy = "^1.4.40"
 numpy = "^1.23.2"
 python-dotenv = "^0.20.0"
