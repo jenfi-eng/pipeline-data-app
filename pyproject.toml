@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pipeline-data-app"
+name = "jenfi-pipeline-data-app"
 version = "0.1.0"
 description = ""
 readme = "README.md"

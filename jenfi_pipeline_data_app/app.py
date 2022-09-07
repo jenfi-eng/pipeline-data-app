@@ -33,8 +33,6 @@ class Application(object):
     PYTHON_ENV = os.getenv("PYTHON_ENV", "development")
 
     def boot(self):
-        load_dotenv()  # take environment variables from .env.
-
         self.init_db()
 
     def cleanup(self):
@@ -61,6 +59,9 @@ class Application(object):
         elif self.PYTHON_ENV == "staging":
             db_config = StagingConfig()
         else:
+            # ONLY DEV - take environment variables from .env
+            load_dotenv()
+
             db_config = DevelopmentConfig()
 
         return db_config
