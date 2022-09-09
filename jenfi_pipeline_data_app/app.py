@@ -49,15 +49,19 @@ class Application(object):
             self.db = None
 
     def db_config(self):
-        from .config import ProductionConfig, StagingConfig, DevelopmentConfig
-
         if self.PYTHON_ENV == "production":
+            from .config import ProductionConfig
+
             db_config = ProductionConfig()
         elif self.PYTHON_ENV == "staging":
+            from .config import StagingConfig
+
             db_config = StagingConfig()
         else:
             # ONLY DEV - take environment variables from .env
             load_dotenv()
+
+            from .config import DevelopmentConfig
 
             db_config = DevelopmentConfig()
 
