@@ -12,8 +12,6 @@ from sqlalchemy.ext.automap import automap_base
 
 from dotenv import load_dotenv
 
-# import boto3
-
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -26,7 +24,6 @@ class NpEncoder(json.JSONEncoder):
         return super(NpEncoder, self).default(obj)
 
 
-# This app is the same as the lib.application
 class Application(object):
     ROOT_DIR = os.path.abspath(os.curdir)
     RESULT_FILENAME = "output.json"
