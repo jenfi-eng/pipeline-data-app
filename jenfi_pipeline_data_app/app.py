@@ -3,6 +3,7 @@ import platform
 import tempfile
 from pathlib import Path
 import json
+import inspect
 import numpy as np
 import pandas as pd
 
@@ -112,3 +113,13 @@ class Application(object):
 
     def __repr__(self):
         return self.__dict__
+
+    def __test_access_global_var__(self):
+        mod = inspect.getmodule(inspect.stack()[1][0])
+
+        return eval("mod.var_defined_globally")
+
+    def __test_set_global_var__(self):
+        mod = inspect.getmodule(inspect.stack()[1][0])
+
+        return exec("mod.var_defined_globally = 'bar'")
