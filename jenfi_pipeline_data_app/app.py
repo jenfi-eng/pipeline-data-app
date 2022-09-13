@@ -93,11 +93,25 @@ class Application(object):
 
         return pd.read_sql(query_str, self.db_engine)
 
-    def write_model(pickel, pickel_name):
+    # This is built specifically to handle loading test variables for papermill.
+    def load_test_parameters(self, params_dict):
+        for var_name, var_val in params_dict.items():
+            # https://stackoverflow.com/questions/1095543/get-name-of-calling-functions-module-in-python
+            mod = inspect.getmodule(inspect.stack()[1][0])
+
+            try:
+                # If this is defined by papermill or anyone else, we don't want to set it.
+                eval(f"mod.{var_name}")
+            except (NameError, AttributeError):
+                # Papermill nor anyone else defined this variable, let's set it ourselves!
+                setattr(mod, var_name, var_val)
+
+
+    def write_model(self, pickel, pickel_name):
         # Upload Model => S3
         pass
 
-    def load_model(pickel, pickel_name):
+    def load_model(self, pickel, pickel_name):
         # Model => S3 => Download Model
         pass
 
@@ -122,4 +136,6 @@ class Application(object):
     def __test_set_global_var__(self):
         mod = inspect.getmodule(inspect.stack()[1][0])
 
-        return exec("mod.var_defined_globally = 'bar'")
+        exec("mod.var_defined_globally = 'bar'")
+
+        pass
