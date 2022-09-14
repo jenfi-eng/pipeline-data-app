@@ -94,11 +94,13 @@ class Application(object):
         return pd.read_sql(query_str, self.db_engine)
 
     # This is built specifically to handle loading test variables for papermill.
+    # EXTREMELY brittle.
     def load_test_parameters(self, params_dict):
-        for var_name, var_val in params_dict.items():
-            # https://stackoverflow.com/questions/1095543/get-name-of-calling-functions-module-in-python
-            mod = inspect.getmodule(inspect.stack()[1][0])
+        import sys
 
+        mod = sys.modules['__main__']
+
+        for var_name, var_val in params_dict.items():
             try:
                 # If this is defined by papermill or anyone else, we don't want to set it.
                 eval(f"mod.{var_name}")
@@ -127,8 +129,13 @@ class Application(object):
 
     def __repr__(self):
         return self.__dict__
+    
+    def __test_direct_module__(self, mod):
+        return eval("mod.var_defined_globally")
 
+    # Most of these methods below don't work because of how jupyter runs code.
     def __test_access_global_var__(self):
+        # https://stackoverflow.com/questions/1095543/get-name-of-calling-functions-module-in-python
         mod = inspect.getmodule(inspect.stack()[1][0])
 
         return eval("mod.var_defined_globally")
