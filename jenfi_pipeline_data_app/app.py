@@ -22,7 +22,22 @@ class NpEncoder(json.JSONEncoder):
             return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
+
         return super(NpEncoder, self).default(obj)
+
+    def _preprocess_nan(self, obj):
+        if isinstance(obj, float) and np.isnan(obj):
+            return str(obj)
+        elif isinstance(obj, dict):
+            return {
+                self._preprocess_nan(k): self._preprocess_nan(v) for k, v in obj.items()
+            }
+        elif isinstance(obj, list):
+            return [self._preprocess_nan(i) for i in obj]
+        return obj
+
+    def iterencode(self, obj):
+        return super(NpEncoder, self).iterencode(self._preprocess_nan(obj))
 
 
 class Application(object):
@@ -98,12 +113,13 @@ class Application(object):
 
     def query_all(self, query_str):
         return self.db.execute(query_str).fetchall()
+
     # This is built specifically to handle loading test variables for papermill.
     # EXTREMELY brittle.
     def load_test_parameters(self, params_dict):
         import sys
 
-        mod = sys.modules['__main__']
+        mod = sys.modules["__main__"]
 
         for var_name, var_val in params_dict.items():
             try:
@@ -113,7 +129,6 @@ class Application(object):
                 # Papermill nor anyone else defined this variable, let's set it ourselves!
                 setattr(mod, var_name, var_val)
 
-
     def write_model(self, pickel, pickel_name):
         # Upload Model => S3
         pass
@@ -122,9 +137,18 @@ class Application(object):
         # Model => S3 => Download Model
         pass
 
+    def write_result_to_db(self, logical_step_name, state_machine_run_id):
+        from .db_models import StateMachineRun
+
+        return StateMachineRun().result_to_db(
+            logical_step_name, state_machine_run_id, self.load_result()
+        )
+
     def write_result(self, result):
         with open(self.tmp_filepath(self.RESULT_FILENAME), "w") as f:
             json.dump(result, f, cls=NpEncoder, default=str)
+
+        return self.tmp_filepath(self.RESULT_FILENAME)
 
     def load_result(self):
         with open(self.tmp_filepath(self.RESULT_FILENAME), "r") as result:
@@ -134,7 +158,7 @@ class Application(object):
 
     def __repr__(self):
         return self.__dict__
-    
+
     def __test_direct_module__(self, mod):
         return eval("mod.var_defined_globally")
 
