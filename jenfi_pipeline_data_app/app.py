@@ -6,6 +6,8 @@ import json
 import inspect
 import numpy as np
 import pandas as pd
+from decimal import Decimal
+from datetime import date, datetime
 
 from sqlalchemy import create_engine, MetaData, or_
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -22,12 +24,16 @@ class NpEncoder(json.JSONEncoder):
             return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
+        if isinstance(obj, Decimal):
+            return float(obj)
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
 
         return super(NpEncoder, self).default(obj)
 
     def _preprocess_nan(self, obj):
         if isinstance(obj, float) and np.isnan(obj):
-            return str(obj)
+            return None
         elif isinstance(obj, dict):
             return {
                 self._preprocess_nan(k): self._preprocess_nan(v) for k, v in obj.items()
@@ -146,7 +152,7 @@ class Application(object):
 
     def write_result(self, result):
         with open(self.tmp_filepath(self.RESULT_FILENAME), "w") as f:
-            json.dump(result, f, cls=NpEncoder, default=str)
+            json.dump(result, f, cls=NpEncoder)
 
         return self.tmp_filepath(self.RESULT_FILENAME)
 
