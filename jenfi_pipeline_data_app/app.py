@@ -93,6 +93,11 @@ class Application(object):
 
         return pd.read_sql(query_str, self.db_engine)
 
+    def query_one(self, query_str):
+        return self.db.execute(query_str).fetchone()
+
+    def query_all(self, query_str):
+        return self.db.execute(query_str).fetchall()
     # This is built specifically to handle loading test variables for papermill.
     # EXTREMELY brittle.
     def load_test_parameters(self, params_dict):
