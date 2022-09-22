@@ -1,5 +1,6 @@
 from jenfi_pipeline_data_app import __version__, PipelineDataApp as Jenfi
 from pathlib import Path
+import sys
 
 def test_root_dir():
     assert Jenfi.ROOT_DIR == str(Path(__file__).parents[1])
@@ -18,6 +19,9 @@ def test_set_global_defined_var():
 ########################################################################################################################################
 var_do_not_change = 'foo'
 def test_set_parameters():
+    # Make the current module look like a jupyter notebook
+    sys.modules['__main__'] = sys.modules[__name__]
+
     Jenfi.load_test_parameters({
         'a_new_var': 'new_val',
         'var_do_not_change': 'should_not_change'
