@@ -22,18 +22,18 @@ def close_db(self):
 
 def db_config(self):
     if self.PYTHON_ENV == "production":
-        from ..config import ProductionConfig
+        from ..config.db import ProductionConfig
 
         db_config = ProductionConfig()
     elif self.PYTHON_ENV == "staging":
-        from ..config import StagingConfig
+        from ..config.db import StagingConfig
 
         db_config = StagingConfig()
     else:
         # ONLY DEV - take environment variables from .env
         load_dotenv()
 
-        from ..config import DevelopmentConfig
+        from ..config.db import DevelopmentConfig
 
         db_config = DevelopmentConfig()
 

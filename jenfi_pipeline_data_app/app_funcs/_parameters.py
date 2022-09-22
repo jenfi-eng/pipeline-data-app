@@ -1,8 +1,8 @@
+import sys
+
 # This is built specifically to handle loading test variables for papermill.
 # EXTREMELY brittle.
 def load_test_parameters(self, params_dict):
-    import sys
-
     mod = sys.modules["__main__"]
 
     for var_name, var_val in params_dict.items():
@@ -12,3 +12,8 @@ def load_test_parameters(self, params_dict):
         except (NameError, AttributeError):
             # Papermill nor anyone else defined this variable, let's set it ourselves!
             setattr(mod, var_name, var_val)
+
+def get_parameter(self, var_name):
+    mod = sys.modules["__main__"]
+
+    return eval(f"mod.{var_name}")
