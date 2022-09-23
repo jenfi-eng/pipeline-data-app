@@ -3,7 +3,7 @@ import sys
 # This is built specifically to handle loading test variables for papermill.
 # EXTREMELY brittle.
 def load_test_parameters(self, params_dict):
-    mod = sys.modules["__main__"]
+    mod = _get_notebook_module()
 
     for var_name, var_val in params_dict.items():
         try:
@@ -13,7 +13,23 @@ def load_test_parameters(self, params_dict):
             # Papermill nor anyone else defined this variable, let's set it ourselves!
             setattr(mod, var_name, var_val)
 
-def get_parameter(self, var_name):
+
+def get_parameter(self, var_name, default=None):
+    mod = _get_notebook_module()
+
+    if default:
+        try:
+            return eval(f"mod.{var_name}")
+        except (NameError, AttributeError):
+            return default
+    else:
+        return eval(f"mod.{var_name}")
+
+
+def _get_notebook_module():
     mod = sys.modules["__main__"]
 
-    return eval(f"mod.{var_name}")
+    if mod:
+        return mod
+    else:
+        raise ModuleNotFoundError("__main__ not found, is this called from a Notebook?")

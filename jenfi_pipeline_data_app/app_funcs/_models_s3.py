@@ -35,7 +35,7 @@ def load_model_from_s3(self, model_key):
 def __s3_model_obj(self, model_key):
     bucket_name = self.s3_config.S3_TRAINED_MODELS_BUCKET
     fileprefix = self.get_parameter("logical_step_name")  # Supposed to be step_name
-    filename = f"{fileprefix}_{model_key}.pickle"
+    filename = f"{fileprefix}/{model_key}.pickle"
 
     s3 = boto3.resource("s3")
 
