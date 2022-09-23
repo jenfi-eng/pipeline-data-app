@@ -33,3 +33,9 @@ def _get_notebook_module():
         return mod
     else:
         raise ModuleNotFoundError("__main__ not found, is this called from a Notebook?")
+
+def _run_data(self):
+    logical_step_name = self.get_parameter("logical_step_name")
+    state_machine_run_id = self.get_parameter("state_machine_run_id")
+
+    return logical_step_name, state_machine_run_id

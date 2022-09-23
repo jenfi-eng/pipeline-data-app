@@ -11,8 +11,8 @@ class Application(object):
     PYTHON_ENV = os.getenv("PYTHON_ENV", "development")
 
     from .app_funcs._db_handler import _init_db, _close_db, _db_config
-    from .app_funcs._query import df_query, query_one, query_all
-    from .app_funcs._parameters import load_test_parameters, get_parameter
+    from .app_funcs._query import df_query, query_one, query_all, _db_cache
+    from .app_funcs._parameters import load_test_parameters, get_parameter, _run_data
     from .app_funcs._result import (
         write_result_to_db,
         write_result,
@@ -33,7 +33,7 @@ class Application(object):
         self._close_db()
         self._remove_result_file()
 
-    def tmp_filepath(self, rel_filepath) -> Path:
+    def tmp_dir(self) -> Path:
         if self.PYTHON_ENV == "production":
             tmp_path = "/tmp"
         elif self.PYTHON_ENV == "staging":
@@ -42,6 +42,11 @@ class Application(object):
             tmp_path = (
                 "/tmp" if platform.system() == "Darwin" else tempfile.gettempdir()
             )
+
+        return Path(tmp_path)
+
+    def tmp_filepath(self, rel_filepath) -> Path:
+        tmp_path = self.tmp_dir()
 
         return Path(os.path.join(tmp_path, rel_filepath))
 
