@@ -5,8 +5,8 @@ from sqlalchemy.ext.automap import automap_base
 from dotenv import load_dotenv
 
 
-def init_db(self):
-    db_config = self.db_config()
+def _init_db(self):
+    db_config = self._db_config()
 
     self.db_engine = create_engine(db_config.SQL_ALCHEMY_CONN, echo=False)
 
@@ -14,13 +14,13 @@ def init_db(self):
     self.db.configure(bind=self.db_engine)
 
 
-def close_db(self):
+def _close_db(self):
     if self.db is not None:
         self.db.close()
         self.db = None
 
 
-def db_config(self):
+def _db_config(self):
     if self.PYTHON_ENV == "production":
         from ..config.db import ProductionConfig
 

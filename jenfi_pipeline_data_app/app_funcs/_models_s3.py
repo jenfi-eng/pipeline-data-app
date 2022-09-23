@@ -1,6 +1,21 @@
 import boto3
 import pickle
 
+def _init_config_s3(self):
+    if self.PYTHON_ENV == "production":
+        from ..config.s3 import ProductionConfig
+
+        self.s3_config = ProductionConfig()
+    elif self.PYTHON_ENV == "staging":
+        from ..config.s3 import StagingConfig
+
+        self.s3_config = StagingConfig()
+    else:
+        from ..config.s3 import DevelopmentConfig
+
+        self.s3_config = DevelopmentConfig()
+
+    pass
 
 def push_model_to_s3(self, model, model_key):
     pickle_byte_obj = pickle.dumps(model)

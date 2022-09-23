@@ -1,9 +1,11 @@
+import os
 import json
 import numpy as np
 import pandas as pd
 
 from decimal import Decimal
 from datetime import date, datetime
+from pathlib import Path
 
 
 class NpEncoder(json.JSONEncoder):
@@ -45,14 +47,35 @@ def write_result_to_db(self, logical_step_name, state_machine_run_id):
 
 
 def write_result(self, result):
-    with open(self.tmp_filepath(self.RESULT_FILENAME), "w") as f:
+    result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
+
+    with open(result_filepath, "w") as f:
         json.dump(result, f, cls=NpEncoder)
 
-    return self.tmp_filepath(self.RESULT_FILENAME)
+    return result_filepath
 
 
 def load_result(self):
-    with open(self.tmp_filepath(self.RESULT_FILENAME), "r") as result:
-        output_data = json.load(result)
+    result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
+
+    if result_filepath.is_file():
+        with open(result_filepath, "r") as result:
+            output_data = json.load(result)
 
         return output_data
+    else:
+        return {
+            "metadata": {
+                "status": "succeeded",
+                "message": "There was no result directly returned from this method.",
+            }
+        }
+
+
+def _remove_result_file(self):
+    result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
+
+    if result_filepath.is_file():
+        os.remove(result_filepath)
+
+    pass
