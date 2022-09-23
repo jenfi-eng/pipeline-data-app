@@ -7,23 +7,29 @@ import sqlparse
 from pathlib import Path
 from functools import lru_cache
 
+
 class Cacher(object):
     MAX_NORMALIZE_QUERY_LENGTH = 40000
     LOGGER = logging.getLogger(__name__)
 
     def __init__(
-        self, logical_step_name: str, state_machine_run_id: str, local_cache_dir: Path
+        self,
+        logical_step_name: str,
+        state_machine_run_id: str,
+        local_cache_dir: Path,
+        s3_bucket_name: str,
     ) -> None:
         self.logical_step_name = logical_step_name
         self.state_machine_run_id = state_machine_run_id
 
         self.local_cache_dir = local_cache_dir
-        self.s3_cache_bucket_name = ""
+        self.s3_cache_bucket_name = s3_bucket_name
 
         pass
 
     def from_cache(self, query_str):
         if self._local_filepath(query_str).is_file():
+            self.LOGGER.debug("LOCAL CACHE")
             with open(self._local_filepath(query_str), "rb") as f:
                 return pickle.load(f)
         else:
@@ -45,7 +51,7 @@ class Cacher(object):
     def exists(self, query_str):
         """
         This only checks if it exists on S3 as source of truth.
-        
+
         Doesn't matter if it exists locally. That's just to help speed.
         """
 

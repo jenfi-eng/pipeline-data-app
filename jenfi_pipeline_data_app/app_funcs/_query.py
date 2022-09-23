@@ -26,5 +26,6 @@ def query_all(self, query_str, rebuild_cache=False):
 
 def _db_cache(self) -> None:
     (step_name, run_id) = self._run_data()
+    bucket_name = self.s3_config.S3_DB_QUERY_CACHE_BUCKET
 
-    return DbCache(self.db_engine, step_name, run_id, self.tmp_dir())
+    return DbCache(self.db_engine, step_name, run_id, self.tmp_dir(), bucket_name)

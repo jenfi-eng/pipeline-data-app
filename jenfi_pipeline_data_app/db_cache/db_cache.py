@@ -12,9 +12,12 @@ class DbCache(object):
         logical_step_name: str,
         state_machine_run_id: str,
         local_cache_dir: Path,
+        s3_bucket_name: str,
     ) -> None:
         self.db_engine = db_engine
-        self.cacher = Cacher(logical_step_name, state_machine_run_id, local_cache_dir)
+        self.cacher = Cacher(
+            logical_step_name, state_machine_run_id, local_cache_dir, s3_bucket_name
+        )
 
         pass
 
