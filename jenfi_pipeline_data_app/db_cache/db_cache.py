@@ -30,13 +30,13 @@ class DbCache(object):
         return pd.read_sql(query_str, self.db_engine)
 
     def query_one(self, query_str: str, rebuild_cache: bool):
-        return self._with_cacher(self._df_query, query_str, rebuild_cache)
+        return self._with_cacher(self._query_one, query_str, rebuild_cache)
 
     def _query_one(self, query_str: str):
         return self.db.execute(query_str).fetchone()
 
     def query_all(self, query_str: str, rebuild_cache: bool):
-        return self._with_cacher(self._df_query, query_str, rebuild_cache)
+        return self._with_cacher(self._query_all, query_str, rebuild_cache)
 
     def _query_all(self, query_str: str):
         return self.db.execute(query_str).fetchall()
