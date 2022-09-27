@@ -4,7 +4,6 @@ import platform
 import tempfile
 from pathlib import Path
 
-
 class Application(object):
     ROOT_DIR = os.path.abspath(os.curdir)
     RESULT_FILENAME = "output.json"
@@ -24,12 +23,15 @@ class Application(object):
         load_model_from_s3,
         _init_config_s3,
     )
+    from .app_funcs._exit_program import exit_not_applicable
 
     def boot(self):
+        """Sets up configs, db connections. It is run as part of the module import."""
         self._init_db()
         self._init_config_s3()
 
     def cleanup(self):
+        """Closes connections and cleans up any lingering items."""
         self._close_db()
         self._remove_result_file()
 
