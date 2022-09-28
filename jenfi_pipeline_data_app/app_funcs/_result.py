@@ -39,8 +39,9 @@ class NpEncoder(json.JSONEncoder):
 
 
 def write_result_to_db(self, logical_step_name, state_machine_run_id):
-    from ..db_models import StateMachineRun
+    from ..db_models import state_machine_run_model
 
+    StateMachineRun = state_machine_run_model(self)
     return StateMachineRun().result_to_db(
         logical_step_name, state_machine_run_id, self.load_result()
     )
@@ -94,7 +95,7 @@ def _write_result(self, result: dict) -> Path:
     return result_filepath
 
 
-def _remove_result_file(self):
+def _remove_result_file(self) -> None:
     result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
 
     if result_filepath.is_file():

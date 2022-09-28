@@ -4,6 +4,7 @@ import platform
 import tempfile
 from pathlib import Path
 
+import sklearn
 
 class Application(object):
     """
