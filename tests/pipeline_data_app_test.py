@@ -1,7 +1,9 @@
 from jenfi_pipeline_data_app import __version__, PipelineDataApp as Jenfi
 from pathlib import Path
+import os
 import sys
 import pytest
+import papermill as pm
 
 from ._jupyter_faker import fake_jupyter_notebook
 
@@ -64,5 +66,44 @@ def test_get_parameter_works():
 def test_no_result():
     assert Jenfi.load_result()["run_metadata"]["status"] == Jenfi.STATUS_NO_RESULT
 
+
 def test_not_applicable():
-    pass
+    pm.execute_notebook(
+        Path(__file__).parent / "./notebooks/exit_not_applicable.ipynb",
+        Jenfi.tmp_filepath("notebook_output.ipynb"),
+    )
+
+    result = Jenfi.load_result()
+    assert result["run_metadata"]["status"] == Jenfi.STATUS_NOT_APPLICABLE
+    assert (
+        result["run_metadata"]["message"]
+        == "exiting early exit_not_applicable"
+    )
+
+
+def test_exit_insufficient_data():
+    pm.execute_notebook(
+        Path(__file__).parent / "./notebooks/exit_insufficient_data.ipynb",
+        Jenfi.tmp_filepath("notebook_output.ipynb"),
+    )
+
+    result = Jenfi.load_result()
+    assert (
+        result["run_metadata"]["status"] == Jenfi.STATUS_INSUFFICIENT_DATA
+    )
+    assert (
+        result["run_metadata"]["message"]
+        == "exiting early exit_insufficient_data"
+    )
+
+
+def test_write_Result():
+    pm.execute_notebook(
+        Path(__file__).parent / "./notebooks/write_result.ipynb",
+        Jenfi.tmp_filepath("notebook_output.ipynb"),
+    )
+
+    result = Jenfi.load_result()
+    assert result["run_metadata"]["status"] == Jenfi.STATUS_SUCCESS
+    assert result["my_result_val"] == 3
+    assert 'message' not in result["run_metadata"]

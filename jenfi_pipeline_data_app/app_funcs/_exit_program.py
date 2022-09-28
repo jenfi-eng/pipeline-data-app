@@ -1,7 +1,5 @@
 # Exit program
-class StopExecution(Exception):
-    def _render_traceback_(self):
-        pass
+import sys
 
 
 def exit_not_applicable(self, message: str) -> None:
@@ -13,7 +11,7 @@ def exit_not_applicable(self, message: str) -> None:
 
     self._write_result(result_with_metadata)
 
-    raise StopExecution
+    sys.exit(0)
 
 
 def exit_insufficient_data(self, message: str) -> None:
@@ -26,4 +24,4 @@ def exit_insufficient_data(self, message: str) -> None:
 
     self._write_result(result_with_metadata)
 
-    raise StopExecution
+    sys.exit(0)
