@@ -56,3 +56,13 @@ var_do_not_change = "foo"
 def test_get_parameter_works():
     with fake_jupyter_notebook(__name__):
         assert Jenfi.get_parameter("var_do_not_change") == var_do_not_change
+
+
+########################################################################################################################################
+
+
+def test_no_result():
+    assert Jenfi.load_result()["run_metadata"]["status"] == Jenfi.STATUS_NO_RESULT
+
+def test_not_applicable():
+    pass

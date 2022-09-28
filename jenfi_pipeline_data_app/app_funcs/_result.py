@@ -46,13 +46,14 @@ def write_result_to_db(self, logical_step_name, state_machine_run_id):
     )
 
 
-def write_result(self, result):
-    result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
+def write_result(self, result: dict) -> Path:
+    """
+    Use after whole notebook is finished to return the final result with a status of `success`
+    """
 
-    with open(result_filepath, "w") as f:
-        json.dump(result, f, cls=NpEncoder)
+    result_with_metadata = self._add_run_metadata(self.STATUS_SUCCESS, result)
 
-    return result_filepath
+    return self._write_result(result_with_metadata)
 
 
 def load_result(self):
@@ -64,12 +65,33 @@ def load_result(self):
 
         return output_data
     else:
-        return {
-            "metadata": {
-                "status": "succeeded",
-                "message": "There was no result directly returned from this method.",
-            }
-        }
+        return self._add_run_metadata(
+            self.STATUS_NO_RESULT,
+            message="There was no result directly returned from this notebook. Is this expected?",
+        )
+
+
+def _add_run_metadata(
+    self, status: str, result: dict = None, message: str = None
+) -> dict:
+    result_with_metadata = {"run_metadata": {"status": status}}
+
+    if result is not None:
+        result_with_metadata = result_with_metadata | result
+
+    if message is not None:
+        result_with_metadata["run_metadata"]["message"] = message
+
+    return result_with_metadata
+
+
+def _write_result(self, result: dict) -> Path:
+    result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
+
+    with open(result_filepath, "w") as f:
+        json.dump(result, f, cls=NpEncoder)
+
+    return result_filepath
 
 
 def _remove_result_file(self):

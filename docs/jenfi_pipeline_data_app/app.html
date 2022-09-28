@@ -32,7 +32,13 @@ import platform
 import tempfile
 from pathlib import Path
 
+
 class Application(object):
+    &#34;&#34;&#34;
+    .. include:: API.md
+
+    &#34;&#34;&#34;
+
     ROOT_DIR = os.path.abspath(os.curdir)
     RESULT_FILENAME = &#34;output.json&#34;
     PYTHON_ENV = os.getenv(&#34;PYTHON_ENV&#34;, &#34;development&#34;)
@@ -51,7 +57,7 @@ class Application(object):
         load_model_from_s3,
         _init_config_s3,
     )
-    from .app_funcs._exit_program import exit_not_applicable
+    from .app_funcs._exit_program import exit_not_applicable, exit_insufficient_data
 
     def boot(self):
         &#34;&#34;&#34;Sets up configs, db connections. It is run as part of the module import.&#34;&#34;&#34;
@@ -104,12 +110,58 @@ class Application(object):
 <span>class <span class="ident">Application</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h1 id="jenfi-data-app-api">Jenfi Data App API</h1>
+<h2 id="primary-return-functions">Primary Return Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Return status</th>
+<th>Function Call</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>success</td>
+<td><code>Jenfi.write_result(result: dict)</code></td>
+<td></td>
+</tr>
+<tr>
+<td>not_applicable</td>
+<td><code>Jenfi.exit_not_applicable(message: ...)</code></td>
+<td>notebook designed for SG, but running a VN company</td>
+</tr>
+<tr>
+<td>insufficent_data</td>
+<td><code>Jenfi.exit_insufficient_data(message: ...)</code></td>
+<td>notebook requires 6m of historical data</td>
+</tr>
+</tbody>
+</table>
+<h2 id="return-payloads">Return Payloads</h2>
+<pre><code class="language-json">{
+  &quot;&lt;result_key&gt;&quot;: &quot;&lt;result_data&gt;&quot;,
+  &quot;&lt;result_key2&gt;&quot;: [&quot;&lt;result_data2&gt;&quot;],
+  ...
+  &quot;run_metadata&quot;: {
+    &quot;status&quot;: &quot;&lt;success|not_applicable|insufficent_data&gt;&quot;
+  }
+}
+</code></pre>
+<h2 id="db-query-caching">DB Query Caching</h2>
+<p><code>db_query</code>, <code>query_one</code>, <code>query_all</code> all have caching.</p>
+<p>Caching is a combination of <code>logical_step_name</code> + <code>state_machine_run_id</code> + <code>query_str</code>.</p>
+<p>This allows caching across time (different <code>state_machine_run_id</code>s) and steps even if the <code>query_str</code> is the same.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Application(object):
+    &#34;&#34;&#34;
+    .. include:: API.md
+
+    &#34;&#34;&#34;
+
     ROOT_DIR = os.path.abspath(os.curdir)
     RESULT_FILENAME = &#34;output.json&#34;
     PYTHON_ENV = os.getenv(&#34;PYTHON_ENV&#34;, &#34;development&#34;)
@@ -128,7 +180,7 @@ class Application(object):
         load_model_from_s3,
         _init_config_s3,
     )
-    from .app_funcs._exit_program import exit_not_applicable
+    from .app_funcs._exit_program import exit_not_applicable, exit_insufficient_data
 
     def boot(self):
         &#34;&#34;&#34;Sets up configs, db connections. It is run as part of the module import.&#34;&#34;&#34;
@@ -181,30 +233,50 @@ class Application(object):
 <h3>Methods</h3>
 <dl>
 <dt id="jenfi_pipeline_data_app.app.Application.df_query"><code class="name flex">
-<span>def <span class="ident">df_query</span></span>(<span>self, query_str, rebuild_cache=False)</span>
+<span>def <span class="ident">df_query</span></span>(<span>self, query_str: str, rebuild_cache: bool = False) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Provide a valid psql query_str and returns a Pandas DataFrame. Has caching.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def df_query(self, query_str, rebuild_cache=False):
+<pre><code class="python">def df_query(self, query_str: str, rebuild_cache: bool=False) -&gt; DataFrame:
+    &#34;&#34;&#34;
+    Provide a valid psql query_str and returns a Pandas DataFrame. Has caching.
+    &#34;&#34;&#34;
     db_cache = self._db_cache()
 
     return db_cache.df_query(query_str, rebuild_cache)</code></pre>
+</details>
+</dd>
+<dt id="jenfi_pipeline_data_app.app.Application.exit_insufficient_data"><code class="name flex">
+<span>def <span class="ident">exit_insufficient_data</span></span>(<span>self, message: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Exits the program early and puts status <code>insufficient_data</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exit_insufficient_data(self, message: str) -&gt; None:
+    &#34;&#34;&#34;Exits the program early and puts status `insufficient_data`&#34;&#34;&#34;
+    # Write output
+
+    raise StopExecution</code></pre>
 </details>
 </dd>
 <dt id="jenfi_pipeline_data_app.app.Application.exit_not_applicable"><code class="name flex">
 <span>def <span class="ident">exit_not_applicable</span></span>(<span>self, message: str) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Exits the program early and puts status <code>not_applicable</code></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def exit_not_applicable(self, message: str) -&gt; None:
+    &#34;&#34;&#34;Exits the program early and puts status `not_applicable`&#34;&#34;&#34;
     # Write output
 
     raise StopExecution</code></pre>
@@ -244,30 +316,37 @@ class Application(object):
 </details>
 </dd>
 <dt id="jenfi_pipeline_data_app.app.Application.query_all"><code class="name flex">
-<span>def <span class="ident">query_all</span></span>(<span>self, query_str, rebuild_cache=False)</span>
+<span>def <span class="ident">query_all</span></span>(<span>self, query_str: str, rebuild_cache: bool = False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Direct sqlalchmey fetchall(). Returns an Array. Has caching.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def query_all(self, query_str, rebuild_cache=False):
+<pre><code class="python">def query_all(self, query_str: str, rebuild_cache: bool=False):
+    &#34;&#34;&#34;
+    Direct sqlalchmey fetchall(). Returns an Array. Has caching.
+    &#34;&#34;&#34;
+
     db_cache = self._db_cache()
 
     return db_cache.query_all(query_str, rebuild_cache)</code></pre>
 </details>
 </dd>
 <dt id="jenfi_pipeline_data_app.app.Application.query_one"><code class="name flex">
-<span>def <span class="ident">query_one</span></span>(<span>self, query_str, rebuild_cache=False)</span>
+<span>def <span class="ident">query_one</span></span>(<span>self, query_str: str, rebuild_cache: bool = False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Direct sqlalchmey fetchone(). Returns None or a dict. Has caching.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def query_one(self, query_str, rebuild_cache=False):
+<pre><code class="python">def query_one(self, query_str: str, rebuild_cache: bool=False):
+    &#34;&#34;&#34;
+    Direct sqlalchmey fetchone(). Returns None or a dict. Has caching.
+    &#34;&#34;&#34;
     db_cache = self._db_cache()
 
     return db_cache.query_one(query_str, rebuild_cache)</code></pre>
@@ -277,12 +356,15 @@ class Application(object):
 <span>def <span class="ident">write_result</span></span>(<span>self, result)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Use after whole notebook is finished to return the final result with a status of <code>success</code></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def write_result(self, result):
+    &#34;&#34;&#34;
+    Use after whole notebook is finished to return the final result with a status of `success`
+    &#34;&#34;&#34;
     result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
 
     with open(result_filepath, &#34;w&#34;) as f:
@@ -311,10 +393,11 @@ class Application(object):
 <ul>
 <li>
 <h4><code><a title="jenfi_pipeline_data_app.app.Application" href="#jenfi_pipeline_data_app.app.Application">Application</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="jenfi_pipeline_data_app.app.Application.PYTHON_ENV" href="#jenfi_pipeline_data_app.app.Application.PYTHON_ENV">PYTHON_ENV</a></code></li>
 <li><code><a title="jenfi_pipeline_data_app.app.Application.ROOT_DIR" href="#jenfi_pipeline_data_app.app.Application.ROOT_DIR">ROOT_DIR</a></code></li>
 <li><code><a title="jenfi_pipeline_data_app.app.Application.df_query" href="#jenfi_pipeline_data_app.app.Application.df_query">df_query</a></code></li>
+<li><code><a title="jenfi_pipeline_data_app.app.Application.exit_insufficient_data" href="#jenfi_pipeline_data_app.app.Application.exit_insufficient_data">exit_insufficient_data</a></code></li>
 <li><code><a title="jenfi_pipeline_data_app.app.Application.exit_not_applicable" href="#jenfi_pipeline_data_app.app.Application.exit_not_applicable">exit_not_applicable</a></code></li>
 <li><code><a title="jenfi_pipeline_data_app.app.Application.load_model_from_s3" href="#jenfi_pipeline_data_app.app.Application.load_model_from_s3">load_model_from_s3</a></code></li>
 <li><code><a title="jenfi_pipeline_data_app.app.Application.push_model_to_s3" href="#jenfi_pipeline_data_app.app.Application.push_model_to_s3">push_model_to_s3</a></code></li>
