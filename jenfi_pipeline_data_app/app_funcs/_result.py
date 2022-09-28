@@ -42,7 +42,7 @@ def write_result_to_db(self, logical_step_name, state_machine_run_id):
     from ..db_models import state_machine_run_model
 
     StateMachineRun = state_machine_run_model(self)
-    return StateMachineRun(self).result_to_db(
+    return StateMachineRun().result_to_db(
         logical_step_name, state_machine_run_id, self.load_result()
     )
 
