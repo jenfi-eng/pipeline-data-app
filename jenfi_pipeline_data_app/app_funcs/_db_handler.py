@@ -29,8 +29,15 @@ def _db_config(self):
         from ..config.db import StagingConfig
 
         db_config = StagingConfig()
+    elif self.PYTHON_ENV == "test":
+        # TEST - take environment variables from .env
+        load_dotenv()
+
+        from ..config.db import TestConfig
+
+        db_config = TestConfig()
     else:
-        # ONLY DEV - take environment variables from .env
+        # DEV - take environment variables from .env
         load_dotenv()
 
         from ..config.db import DevelopmentConfig

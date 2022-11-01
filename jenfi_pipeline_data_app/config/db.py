@@ -28,6 +28,15 @@ class StagingConfig(Config):
     DB_NAME = os.getenv("DB_NAME", "jenfi_com_staging")
 
 
+class TestConfig(Config):
+    DEBUG = os.getenv("DEBUG", True)
+    PG_USERNAME = os.getenv("PG_USERNAME", "postgres")
+    PG_PASSWORD = os.getenv("PG_PASSWORD", "")
+    PG_HOST = os.getenv("PG_HOST", "localhost")
+    DB_PORT = os.getenv("PG_PORT", 5432)
+    DB_NAME = os.getenv("DB_NAME", "jenfi_com_test")
+
+
 class DevelopmentConfig(Config):
     DEBUG = os.getenv("DEBUG", True)
     PG_USERNAME = os.getenv("PG_USERNAME", "postgres")

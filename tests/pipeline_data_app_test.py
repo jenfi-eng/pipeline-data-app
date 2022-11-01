@@ -1,10 +1,12 @@
-from jenfi_pipeline_data_app import __version__, PipelineDataApp as Jenfi
 from pathlib import Path
 import os
 import sys
 import pytest
 import papermill as pm
 
+from ._pytest_all import *
+
+from jenfi_pipeline_data_app import __version__, PipelineDataApp as Jenfi
 from ._jupyter_faker import fake_jupyter_notebook
 
 
@@ -75,10 +77,7 @@ def test_not_applicable():
 
     result = Jenfi.load_result()
     assert result["run_metadata"]["status"] == Jenfi.STATUS_NOT_APPLICABLE
-    assert (
-        result["run_metadata"]["message"]
-        == "exiting early exit_not_applicable"
-    )
+    assert result["run_metadata"]["message"] == "exiting early exit_not_applicable"
 
 
 def test_exit_insufficient_data():
@@ -88,13 +87,8 @@ def test_exit_insufficient_data():
     )
 
     result = Jenfi.load_result()
-    assert (
-        result["run_metadata"]["status"] == Jenfi.STATUS_INSUFFICIENT_DATA
-    )
-    assert (
-        result["run_metadata"]["message"]
-        == "exiting early exit_insufficient_data"
-    )
+    assert result["run_metadata"]["status"] == Jenfi.STATUS_INSUFFICIENT_DATA
+    assert result["run_metadata"]["message"] == "exiting early exit_insufficient_data"
 
 
 def test_write_Result():
@@ -106,4 +100,29 @@ def test_write_Result():
     result = Jenfi.load_result()
     assert result["run_metadata"]["status"] == Jenfi.STATUS_SUCCESS
     assert result["my_result_val"] == 3
-    assert 'message' not in result["run_metadata"]
+    assert "message" not in result["run_metadata"]
+
+
+def test_db_connection():
+    from jenfi_pipeline_data_app.db_models import (
+        state_machine_run_model,
+        state_machine_model,
+    )
+
+    pipeline_name = "TEST_PIPELINE"
+    logical_step_name = "TEST_STEP_NAME"
+    results = {"TEST_RESULT": "OK"}
+
+    StateMachine = state_machine_model(Jenfi)
+    sm = StateMachine(pipeline_name=pipeline_name)
+    Jenfi.db.add(sm)
+    Jenfi.db.commit()
+
+    StateMachineRun = state_machine_run_model(Jenfi)
+    sm_run = StateMachineRun(pipeline_state_machine_id=sm.id)
+    Jenfi.db.add(sm_run)
+    Jenfi.db.commit()
+
+    sm_run.result_to_db(logical_step_name, sm_run.id, results)
+
+    assert sm_run.result[logical_step_name] == results
