@@ -38,12 +38,12 @@ class NpEncoder(json.JSONEncoder):
         return super(NpEncoder, self).iterencode(self._preprocess_nan(obj))
 
 
-def write_result_to_db(self, logical_step_name, state_machine_run_id):
+def write_result_to_db(self, logical_step_name, state_machine_run_id, results):
     from ..db_models import state_machine_run_model
 
     StateMachineRun = state_machine_run_model(self)
     return StateMachineRun().result_to_db(
-        logical_step_name, state_machine_run_id, self.load_result()
+        logical_step_name, state_machine_run_id, results
     )
 
 
@@ -54,7 +54,7 @@ def write_result(self, result: dict) -> Path:
 
     result_with_metadata = self._add_run_metadata(self.STATUS_SUCCESS, result)
 
-    return self._write_result(result_with_metadata)
+    return self._results_to_tmpfile(result_with_metadata)
 
 
 def load_result(self):
@@ -86,7 +86,7 @@ def _add_run_metadata(
     return result_with_metadata
 
 
-def _write_result(self, result: dict) -> Path:
+def _results_to_tmpfile(self, result: dict) -> Path:
     result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
 
     with open(result_filepath, "w") as f:
@@ -95,7 +95,7 @@ def _write_result(self, result: dict) -> Path:
     return result_filepath
 
 
-def _remove_result_file(self) -> None:
+def _remove_results_tmpfile(self) -> None:
     result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
 
     if result_filepath.is_file():

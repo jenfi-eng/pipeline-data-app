@@ -91,7 +91,7 @@ def test_exit_insufficient_data():
     assert result["run_metadata"]["message"] == "exiting early exit_insufficient_data"
 
 
-def test_write_Result():
+def test_results_to_tmpfile():
     pm.execute_notebook(
         Path(__file__).parent / "./notebooks/write_result.ipynb",
         Jenfi.tmp_filepath("notebook_output.ipynb"),
@@ -103,7 +103,7 @@ def test_write_Result():
     assert "message" not in result["run_metadata"]
 
 
-def test_db_connection():
+def test_result_to_db():
     from jenfi_pipeline_data_app.db_models import (
         state_machine_run_model,
         state_machine_model,
@@ -126,3 +126,6 @@ def test_db_connection():
     sm_run.result_to_db(logical_step_name, sm_run.id, results)
 
     assert sm_run.result[logical_step_name] == results
+
+def test_notebook_not_found_s3():
+    Jenfi.notebook_not_found_s3()

@@ -6,6 +6,7 @@ from pathlib import Path
 
 import sklearn
 
+
 class Application(object):
     """
     .. include:: API.md
@@ -20,6 +21,7 @@ class Application(object):
         STATUS_INSUFFICIENT_DATA,
         STATUS_SUCCESS,
         STATUS_NO_RESULT,
+        STATUS_NOTEBOOK_NOT_FOUND_S3,
     )
 
     from .app_funcs._db_handler import _init_db, _close_db, _db_config
@@ -30,8 +32,8 @@ class Application(object):
         write_result,
         load_result,
         _add_run_metadata,
-        _remove_result_file,
-        _write_result,
+        _remove_results_tmpfile,
+        _results_to_tmpfile,
     )
     from .app_funcs._models_s3 import (
         push_model_to_s3,
@@ -41,18 +43,19 @@ class Application(object):
     from .app_funcs._exit_program import (
         exit_not_applicable,
         exit_insufficient_data,
+        notebook_not_found_s3,
     )
 
     def boot(self):
         """Sets up configs, db connections. It is run as part of the module import."""
         self._init_db()
         self._init_config_s3()
-        self._remove_result_file()  # Any lingering files
+        self._remove_results_tmpfile()  # Any lingering files
 
     def cleanup(self):
         """Closes connections and cleans up any lingering items."""
         self._close_db()
-        self._remove_result_file()
+        self._remove_results_tmpfile()
 
     def tmp_dir(self) -> Path:
         if self.PYTHON_ENV == "production":
