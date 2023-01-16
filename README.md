@@ -4,7 +4,7 @@ Designed to allow teams to access Jenfi's data sources in a Jupyter Notebook.
 
 ## Docs
 
-[View public API doc](https://jenfi-eng.github.io/pipeline-data) for using in Jupyter notebook.
+[View public API doc](https://jenfi-eng.github.io/pipeline-data-app) for using in Jupyter notebook.
 
 ## Basic Usage
 
