@@ -1,4 +1,4 @@
-__version__ = "0.3.10"
+__version__ = "0.3.11"
 
 from ._pdoc import __pdoc__
 
@@ -10,7 +10,7 @@ PipelineDataApp.boot()
 
 print()
 print()
-print("Welcome to the Jenfi Data App!")
+print(f"Welcome to the Jenfi Data App! v{__version__}")
 print("https://jenfi-eng.github.io/pipeline-data-app")
 print(
     "------------------------------------------------------------------------------------"
