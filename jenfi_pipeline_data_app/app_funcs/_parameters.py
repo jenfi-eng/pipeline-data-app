@@ -39,5 +39,6 @@ def _get_notebook_module():
 def _run_data(self):
     logical_step_name = self.get_parameter("logical_step_name")
     state_machine_run_id = self.get_parameter("state_machine_run_id")
+    disable_cache = self.get_parameter("disable_cache", False)
 
-    return logical_step_name, state_machine_run_id
+    return logical_step_name, state_machine_run_id, disable_cache
