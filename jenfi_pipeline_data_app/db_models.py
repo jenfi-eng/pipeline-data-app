@@ -1,13 +1,9 @@
-from sqlalchemy import ForeignKey, Table, MetaData, Column, JSON
-from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.ext.declarative import declarative_base
-
-from sqlalchemy.orm.attributes import flag_modified
-
 import datetime
 
-from sqlalchemy import Table, Column, Integer, DateTime
+from sqlalchemy import JSON, Column, DateTime, Integer, MetaData, Table
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.mutable import MutableDict
+
 
 # This shouldn't be a function, but I can't figure out how to pass a db_engine before the class creation on import.
 # ATM, all classes will have to be loaded via function =\
@@ -24,8 +20,8 @@ def state_machine_run_model(app):
             metadata,
             Column("id", Integer, primary_key=True),
             Column("result", MutableDict.as_mutable(JSON)),
-            Column('created_at', DateTime, default=datetime.datetime.now),
-            Column('updated_at', DateTime, default=datetime.datetime.now),
+            Column("created_at", DateTime, default=datetime.datetime.now),
+            Column("updated_at", DateTime, default=datetime.datetime.now),
             autoload=True,
         )
 
@@ -42,6 +38,7 @@ def state_machine_run_model(app):
 
     return StateMachineRun
 
+
 def state_machine_model(app):
     Base = declarative_base()
     metadata = MetaData(bind=app.db_engine)
@@ -51,8 +48,8 @@ def state_machine_model(app):
             "pipeline_state_machines",
             metadata,
             Column("id", Integer, primary_key=True),
-            Column('created_at', DateTime, default=datetime.datetime.now),
-            Column('updated_at', DateTime, default=datetime.datetime.now),
+            Column("created_at", DateTime, default=datetime.datetime.now),
+            Column("updated_at", DateTime, default=datetime.datetime.now),
             autoload=True,
         )
 

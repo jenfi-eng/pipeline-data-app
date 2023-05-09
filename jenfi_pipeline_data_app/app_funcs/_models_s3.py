@@ -1,5 +1,7 @@
-import boto3
 import pickle
+
+import boto3
+
 
 def _init_config_s3(self):
     if self.PYTHON_ENV == "production":
@@ -17,6 +19,7 @@ def _init_config_s3(self):
 
     pass
 
+
 def push_model_to_s3(self, model, model_key):
     pickle_byte_obj = pickle.dumps(model)
 
@@ -29,7 +32,7 @@ def load_model_from_s3(self, model_key):
     # Model => S3 => Download Model
     obj = _s3_model_obj(self, model_key)
 
-    return pickle.loads(obj.get()['Body'].read())
+    return pickle.loads(obj.get()["Body"].read())
 
 
 def _s3_model_obj(self, model_key):

@@ -8,7 +8,7 @@ for func_name in [
     "tmp_dir",
     "tmp_filepath",
     "RESULT_FILENAME",
-    "load_result"
+    "load_result",
 ]:
     __pdoc__[f"app.Application.{func_name}"] = False
 __pdoc__["config"] = False

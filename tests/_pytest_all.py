@@ -1,6 +1,7 @@
 import pytest
 
-from jenfi_pipeline_data_app import __version__, PipelineDataApp as Jenfi
+from jenfi_pipeline_data_app import PipelineDataApp as Jenfi
+from jenfi_pipeline_data_app import __version__  # noqa E401
 
 
 # This function wraps every test and clears the tables used below.
@@ -8,8 +9,8 @@ from jenfi_pipeline_data_app import __version__, PipelineDataApp as Jenfi
 @pytest.fixture(autouse=True)
 def run_before_and_after_tests(tmpdir):
     from jenfi_pipeline_data_app.db_models import (
-        state_machine_run_model,
         state_machine_model,
+        state_machine_run_model,
     )
 
     StateMachine = state_machine_model(Jenfi)
@@ -18,15 +19,15 @@ def run_before_and_after_tests(tmpdir):
 
     """Fixture to execute asserts before and after a test is run"""
     # Setup: fill with any logic you want
-    truncate_db(used_objs)
+    _truncate_db(used_objs)
 
     yield  # this is where the testing happens
 
     # Teardown : fill with any logic you want
-    truncate_db(used_objs)
+    _truncate_db(used_objs)
 
 
-def truncate_db(objs):
+def _truncate_db(objs):
     # delete all table data (but keep tables)
     # we do cleanup before test 'cause if previous test errored,
     # DB can contain dust

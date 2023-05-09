@@ -1,11 +1,10 @@
-import os
 import json
-import numpy as np
-import pandas as pd
-
-from decimal import Decimal
+import os
 from datetime import date, datetime
+from decimal import Decimal
 from pathlib import Path
+
+import numpy as np
 
 
 class NpEncoder(json.JSONEncoder):
@@ -21,7 +20,7 @@ class NpEncoder(json.JSONEncoder):
         if isinstance(obj, (datetime, date)):
             return obj.isoformat()
 
-        return super(NpEncoder, self).default(obj)
+        return super().default(obj)
 
     def _preprocess_nan(self, obj):
         if isinstance(obj, float) and np.isnan(obj):
@@ -35,7 +34,7 @@ class NpEncoder(json.JSONEncoder):
         return obj
 
     def iterencode(self, obj):
-        return super(NpEncoder, self).iterencode(self._preprocess_nan(obj))
+        return super().iterencode(self._preprocess_nan(obj))
 
 
 def write_result_to_db(self, logical_step_name, state_machine_run_id, results):
@@ -61,7 +60,7 @@ def load_result(self):
     result_filepath = self.tmp_filepath(self.RESULT_FILENAME)
 
     if result_filepath.is_file():
-        with open(result_filepath, "r") as result:
+        with open(result_filepath) as result:
             output_data = json.load(result)
 
         return output_data

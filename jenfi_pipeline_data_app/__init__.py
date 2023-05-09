@@ -1,7 +1,6 @@
 __version__ = "0.3.14"
 
-from ._pdoc import __pdoc__
-
+# from ._pdoc import __pdoc__
 from .app import Application
 
 PipelineDataApp = Application()

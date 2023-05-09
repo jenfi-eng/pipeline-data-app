@@ -1,5 +1,6 @@
 import sys
 
+
 # This is built specifically to handle loading test variables for papermill.
 # EXTREMELY brittle.
 def load_test_parameters(self, params_dict):
@@ -15,7 +16,7 @@ def load_test_parameters(self, params_dict):
 
 
 def get_parameter(self, var_name, default=None):
-    mod = _get_notebook_module()
+    mod = _get_notebook_module()  # noqa F841
 
     if default:
         try:
@@ -33,6 +34,7 @@ def _get_notebook_module():
         return mod
     else:
         raise ModuleNotFoundError("__main__ not found, is this called from a Notebook?")
+
 
 def _run_data(self):
     logical_step_name = self.get_parameter("logical_step_name")

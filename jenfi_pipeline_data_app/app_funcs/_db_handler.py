@@ -1,8 +1,6 @@
-from sqlalchemy import create_engine, MetaData, or_
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.ext.automap import automap_base
-
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 def _init_db(self):

@@ -1,14 +1,14 @@
-import boto3
-import pickle
 import hashlib
 import logging
+import pickle
+from functools import lru_cache
+from pathlib import Path
+
+import boto3
 import sqlparse
 
-from pathlib import Path
-from functools import lru_cache
 
-
-class Cacher(object):
+class Cacher:
     MAX_NORMALIZE_QUERY_LENGTH = 40000
     LOGGER = logging.getLogger(__name__)
 

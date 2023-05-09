@@ -1,11 +1,12 @@
-from sqlalchemy.engine import Engine
 from pathlib import Path
+
 import pandas as pd
+from sqlalchemy.engine import Engine
 
 from .cacher import Cacher
 
 
-class DbCache(object):
+class DbCache:
     def __init__(
         self,
         db,
@@ -23,7 +24,9 @@ class DbCache(object):
 
         pass
 
-    def df_query(self, query_str: str, rebuild_cache: bool, skip_cache: bool) -> pd.DataFrame:
+    def df_query(
+        self, query_str: str, rebuild_cache: bool, skip_cache: bool
+    ) -> pd.DataFrame:
         return self._with_cacher(self._df_query, query_str, rebuild_cache, skip_cache)
 
     def _df_query(self, query_str: str) -> pd.DataFrame:
@@ -41,7 +44,9 @@ class DbCache(object):
     def _query_all(self, query_str: str):
         return self.db.execute(query_str).fetchall()
 
-    def _with_cacher(self, query_func, query_str: str, rebuild_cache: bool, skip_cache: bool):
+    def _with_cacher(
+        self, query_func, query_str: str, rebuild_cache: bool, skip_cache: bool
+    ):
         if skip_cache:
             return query_func(query_str)
         elif self.cacher.exists(query_str) and not rebuild_cache:

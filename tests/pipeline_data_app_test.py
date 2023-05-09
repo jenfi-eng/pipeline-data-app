@@ -1,13 +1,13 @@
-from pathlib import Path
-import os
 import sys
-import pytest
+from pathlib import Path
+
 import papermill as pm
+import pytest
 
-from ._pytest_all import *
+from jenfi_pipeline_data_app import PipelineDataApp as Jenfi
 
-from jenfi_pipeline_data_app import __version__, PipelineDataApp as Jenfi
 from ._jupyter_faker import fake_jupyter_notebook
+from ._pytest_all import run_before_and_after_tests  # noqa F401
 
 
 def test_root_dir():
@@ -18,7 +18,7 @@ def test_access_global_defined_var():
     assert Jenfi._test_access_global_var() == var_defined_globally
 
 
-########################################################################################################################################
+####################################################################################################################
 var_defined_globally = "foo"
 
 
@@ -29,7 +29,7 @@ def test_set_global_defined_var():
     assert var_defined_globally == "bar"
 
 
-########################################################################################################################################
+####################################################################################################################
 var_do_not_change = "foo"
 
 
@@ -39,13 +39,13 @@ def test_set_parameters():
             {"a_new_var": "new_val", "var_do_not_change": "should_not_change"}
         )
 
-        assert a_new_var == "new_val"
+        assert a_new_var == "new_val"  # noqa F821
         assert (
             var_do_not_change == "foo"
         )  # Originally set to foo, attempted to change to 'should_not_change'
 
 
-########################################################################################################################################
+####################################################################################################################
 def test_get_parameter_missing_module():
     sys.modules["__main__"] = None
 
@@ -53,7 +53,7 @@ def test_get_parameter_missing_module():
         Jenfi.get_parameter("mod_missing")
 
 
-########################################################################################################################################
+####################################################################################################################
 var_do_not_change = "foo"
 
 
@@ -62,7 +62,7 @@ def test_get_parameter_works():
         assert Jenfi.get_parameter("var_do_not_change") == var_do_not_change
 
 
-########################################################################################################################################
+####################################################################################################################
 
 
 def test_no_result():
@@ -105,8 +105,8 @@ def test_results_to_tmpfile():
 
 def test_result_to_db():
     from jenfi_pipeline_data_app.db_models import (
-        state_machine_run_model,
         state_machine_model,
+        state_machine_run_model,
     )
 
     pipeline_name = "TEST_PIPELINE"
@@ -126,6 +126,7 @@ def test_result_to_db():
     sm_run.result_to_db(logical_step_name, sm_run.id, results)
 
     assert sm_run.result[logical_step_name] == results
+
 
 def test_notebook_not_found_s3():
     Jenfi.notebook_not_found_s3()

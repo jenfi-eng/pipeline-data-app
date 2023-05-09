@@ -1,9 +1,13 @@
-from ..db_cache import DbCache
 from pandas import DataFrame
+
+from ..db_cache import DbCache
+
 
 # Primary use point for Credit
 # Should be able to help take snapshot of data and return the cache as necessary.
-def df_query(self, query_str: str, rebuild_cache: bool=False, skip_cache: bool=False) -> DataFrame:
+def df_query(
+    self, query_str: str, rebuild_cache: bool = False, skip_cache: bool = False
+) -> DataFrame:
     """
     Provide a valid psql query_str and returns a Pandas DataFrame. Has caching.
     """
@@ -11,10 +15,14 @@ def df_query(self, query_str: str, rebuild_cache: bool=False, skip_cache: bool=F
 
     return db_cache.df_query(query_str, rebuild_cache, skip_cache)
 
+
 # Alias for df_query
 query_df = df_query
 
-def query_one(self, query_str: str, rebuild_cache: bool=False, skip_cache: bool=False):
+
+def query_one(
+    self, query_str: str, rebuild_cache: bool = False, skip_cache: bool = False
+):
     """
     Direct sqlalchmey fetchone(). Returns None or a dict. Has caching.
     """
@@ -23,7 +31,9 @@ def query_one(self, query_str: str, rebuild_cache: bool=False, skip_cache: bool=
     return db_cache.query_one(query_str, rebuild_cache, skip_cache)
 
 
-def query_all(self, query_str: str, rebuild_cache: bool=False, skip_cache: bool=False):
+def query_all(
+    self, query_str: str, rebuild_cache: bool = False, skip_cache: bool = False
+):
     """
     Direct sqlalchmey fetchall(). Returns an Array. Has caching.
     """
