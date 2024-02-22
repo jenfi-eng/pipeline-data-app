@@ -30,7 +30,10 @@ class DbCache:
         return self._with_cacher(self._df_query, query_str, rebuild_cache)
 
     def _df_query(self, query_str: str) -> pd.DataFrame:
-        return pd.read_sql(query_str, self.db_engine)
+        # For pandas 2.2.0
+        # https://stackoverflow.com/a/77949093
+        with self.db_engine.connect() as conn:
+            return pd.read_sql(query_str, conn.connection)
 
     def query_one(self, query_str: str, rebuild_cache: bool):
         return self._with_cacher(self._query_one, query_str, rebuild_cache)
