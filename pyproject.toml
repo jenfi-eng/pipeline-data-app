@@ -19,6 +19,7 @@ sagemaker = "^2.150.0"
 statsmodels = "^0.13.5"
 jupyterlab-git = "^0.41.0"
 levenshtein = "^0.21.0"
+catboost = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
