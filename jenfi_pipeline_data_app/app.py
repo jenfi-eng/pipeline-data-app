@@ -68,8 +68,12 @@ class Application:
 
     def tmp_filepath(self, rel_filepath) -> Path:
         tmp_path = self.tmp_dir()
+        file_path = Path(os.path.join(tmp_path, rel_filepath))
 
-        return Path(os.path.join(tmp_path, rel_filepath))
+        # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        return file_path
 
     def __repr__(self):
         return self.__dict__

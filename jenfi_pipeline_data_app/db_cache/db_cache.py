@@ -32,6 +32,10 @@ class DbCache:
     def _df_query(self, query_str: str) -> pd.DataFrame:
         # For pandas 2.2.0
         # https://stackoverflow.com/a/77949093
+
+        # Debugging
+        print(query_str)
+        print(self.db_engine)
         with self.db_engine.connect() as conn:
             return pd.read_sql(query_str, conn.connection)
 
