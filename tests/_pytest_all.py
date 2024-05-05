@@ -9,13 +9,11 @@ from jenfi_pipeline_data_app import __version__  # noqa E401
 @pytest.fixture(autouse=True)
 def run_before_and_after_tests(tmpdir):
     from jenfi_pipeline_data_app.db_models import (
-        state_machine_model,
         state_machine_run_model,
     )
 
-    StateMachine = state_machine_model(Jenfi)
     StateMachineRun = state_machine_run_model(Jenfi)
-    used_objs = [StateMachine, StateMachineRun]
+    used_objs = [StateMachineRun]
 
     """Fixture to execute asserts before and after a test is run"""
     # Setup: fill with any logic you want
