@@ -75,5 +75,7 @@ def _load_core_state_machine_run_model(app):
 
 def _is_nellie():
     app_name = os.getenv("CORE_APP_NAME", None)
+    if app_name is None:
+        return False
 
     return app_name.startswith("Nellie")
