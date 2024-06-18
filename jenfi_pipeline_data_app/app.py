@@ -31,6 +31,7 @@ class Application:
         _init_config_s3,
         load_model_from_s3,
         push_model_to_s3,
+        load_model_from_s3_to_file
     )
     from .app_funcs._parameters import _run_data, get_parameter, load_test_parameters
     from .app_funcs._query import _db_cache, df_query, query_all, query_one

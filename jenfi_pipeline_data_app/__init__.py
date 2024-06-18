@@ -1,4 +1,4 @@
-__version__ = "0.5.2"
+__version__ = "0.5.5"
 
 # from ._pdoc import __pdoc__
 from .app import Application
