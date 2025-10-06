@@ -31,6 +31,7 @@ class Application:
         _init_config_s3,
         load_model_from_s3,
         push_model_to_s3,
+        load_model_from_s3_to_file,
     )
     from .app_funcs._parameters import _run_data, get_parameter, load_test_parameters
     from .app_funcs._query import _db_cache, df_query, query_all, query_one
@@ -68,8 +69,12 @@ class Application:
 
     def tmp_filepath(self, rel_filepath) -> Path:
         tmp_path = self.tmp_dir()
+        file_path = Path(os.path.join(tmp_path, rel_filepath))
 
-        return Path(os.path.join(tmp_path, rel_filepath))
+        # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        return file_path
 
     def __repr__(self):
         return self.__dict__

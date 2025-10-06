@@ -105,21 +105,14 @@ def test_results_to_tmpfile():
 
 def test_result_to_db():
     from jenfi_pipeline_data_app.db_models import (
-        state_machine_model,
         state_machine_run_model,
     )
 
-    pipeline_name = "TEST_PIPELINE"
     logical_step_name = "TEST_STEP_NAME"
     results = {"TEST_RESULT": "OK"}
 
-    StateMachine = state_machine_model(Jenfi)
-    sm = StateMachine(pipeline_name=pipeline_name)
-    Jenfi.db.add(sm)
-    Jenfi.db.commit()
-
     StateMachineRun = state_machine_run_model(Jenfi)
-    sm_run = StateMachineRun(pipeline_state_machine_id=sm.id)
+    sm_run = StateMachineRun()
     Jenfi.db.add(sm_run)
     Jenfi.db.commit()
 

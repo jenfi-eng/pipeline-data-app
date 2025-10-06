@@ -167,3 +167,4 @@ notebooks/
 sagemaker/models/
 
 .DS_Store
+.claude/

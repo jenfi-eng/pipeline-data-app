@@ -35,10 +35,31 @@ def load_model_from_s3(self, model_key):
     return pickle.loads(obj.get()["Body"].read())
 
 
+# To support custom model loading
+def load_model_content_from_s3(self, model_key):
+    obj = _s3_model_obj(self, model_key)
+
+    return obj.get()["Body"].read()
+
+
+def load_model_from_s3_to_file(self, model_key, file_path):
+    obj = _s3_model_obj(self, model_key)
+
+    with open(file_path, "wb") as file:
+        file.write(obj.get()["Body"].read())
+
+
+def _s3_key_with_default_extension(self, key):
+    if "." not in key:
+        return f"{key}.pickle"
+
+    return key
+
+
 def _s3_model_obj(self, model_key):
     bucket_name = self.s3_config.S3_TRAINED_MODELS_BUCKET
     fileprefix = self.get_parameter("logical_step_name")  # Supposed to be step_name
-    filepath = f"{fileprefix}/{model_key}.pickle"
+    filepath = _s3_key_with_default_extension(self, f"{fileprefix}/{model_key}")
 
     s3 = boto3.resource("s3")
 
