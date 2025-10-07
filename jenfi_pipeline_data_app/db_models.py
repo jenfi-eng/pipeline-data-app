@@ -2,7 +2,7 @@ import datetime
 import os
 
 from sqlalchemy import JSON, Column, DateTime, Integer, MetaData, Table
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.ext.mutable import MutableDict
 
 
@@ -17,9 +17,10 @@ def state_machine_run_model(app):
     else:
         return _load_core_state_machine_run_model(app)
 
+
 def _load_nellie_state_machine_run_model(app):
     Base = declarative_base()
-    metadata = MetaData(bind=app.db_engine)
+    metadata = MetaData()
 
     class NellieStateMachineRun(Base):
         __table__ = Table(
@@ -29,7 +30,7 @@ def _load_nellie_state_machine_run_model(app):
             Column("result", MutableDict.as_mutable(JSON)),
             Column("created", DateTime, default=datetime.datetime.now),
             Column("modified", DateTime, default=datetime.datetime.now),
-            autoload=True,
+            autoload_with=app.db_engine,
         )
 
         def result_to_db(self, logical_step_name, state_machine_run_id, results):
@@ -45,9 +46,10 @@ def _load_nellie_state_machine_run_model(app):
 
     return NellieStateMachineRun
 
+
 def _load_core_state_machine_run_model(app):
     Base = declarative_base()
-    metadata = MetaData(bind=app.db_engine)
+    metadata = MetaData()
 
     class StateMachineRun(Base):
         __table__ = Table(
@@ -57,7 +59,7 @@ def _load_core_state_machine_run_model(app):
             Column("result", MutableDict.as_mutable(JSON)),
             Column("created_at", DateTime, default=datetime.datetime.now),
             Column("updated_at", DateTime, default=datetime.datetime.now),
-            autoload=True,
+            autoload_with=app.db_engine,
         )
 
         def result_to_db(self, logical_step_name, state_machine_run_id, results):
@@ -72,6 +74,13 @@ def _load_core_state_machine_run_model(app):
             return app.db.commit()
 
     return StateMachineRun
+
+
+def _is_nellie():
+    app_name = os.getenv("CORE_APP_NAME", None)
+    if app_name is None:
+        return False
+
 
 def _is_nellie():
     app_name = os.getenv("CORE_APP_NAME", None)

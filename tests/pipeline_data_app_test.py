@@ -104,6 +104,7 @@ def test_results_to_tmpfile():
 
 
 def test_result_to_db():
+    from sqlalchemy import text
     from jenfi_pipeline_data_app.db_models import (
         state_machine_run_model,
     )
@@ -111,8 +112,16 @@ def test_result_to_db():
     logical_step_name = "TEST_STEP_NAME"
     results = {"TEST_RESULT": "OK"}
 
+    # Create parent pipeline_state_machines record to satisfy foreign key
+    Jenfi.db.execute(
+        text(
+            "INSERT INTO pipeline_state_machines (id, pipeline_name, created_at, updated_at) VALUES (1, 'TEST_PIPELINE', NOW(), NOW()) ON CONFLICT (id) DO NOTHING"
+        )
+    )
+    Jenfi.db.commit()
+
     StateMachineRun = state_machine_run_model(Jenfi)
-    sm_run = StateMachineRun(pipeline_state_machine_id=sm.id)
+    sm_run = StateMachineRun(pipeline_state_machine_id=1)
     Jenfi.db.add(sm_run)
     Jenfi.db.commit()
 
