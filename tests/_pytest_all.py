@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy import text
 
 from jenfi_pipeline_data_app import PipelineDataApp as Jenfi
 from jenfi_pipeline_data_app import __version__  # noqa E401
@@ -34,7 +35,7 @@ def _truncate_db(objs):
     con = engine.connect()
     trans = con.begin()
     for obj in objs:
-        con.execute(f'ALTER TABLE "{obj.__table__.name}" DISABLE TRIGGER ALL;')
+        con.execute(text(f'ALTER TABLE "{obj.__table__.name}" DISABLE TRIGGER ALL;'))
         con.execute(obj.__table__.delete())
-        con.execute(f'ALTER TABLE "{obj.__table__.name}" ENABLE TRIGGER ALL;')
+        con.execute(text(f'ALTER TABLE "{obj.__table__.name}" ENABLE TRIGGER ALL;'))
     trans.commit()

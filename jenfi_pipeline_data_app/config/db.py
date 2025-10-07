@@ -7,7 +7,7 @@ class Config:
 
     @property
     def SQL_ALCHEMY_CONN(self):
-        return f"postgresql+psycopg2://{self.PG_USERNAME}:{self.PG_PASSWORD}@{self.PG_HOST}:{self.DB_PORT}/{self.DB_NAME}"  # noqa E501
+        return f"postgresql+psycopg://{self.PG_USERNAME}:{self.PG_PASSWORD}@{self.PG_HOST}:{self.DB_PORT}/{self.DB_NAME}"  # noqa E501
 
 
 class ProductionConfig(Config):
