@@ -81,4 +81,10 @@ def _is_nellie():
     if app_name is None:
         return False
 
+
+def _is_nellie():
+    app_name = os.getenv("CORE_APP_NAME", None)
+    if app_name is None:
+        return False
+
     return app_name.startswith("Nellie")
