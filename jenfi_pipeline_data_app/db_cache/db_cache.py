@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from .cacher import Cacher
@@ -30,26 +31,20 @@ class DbCache:
         return self._with_cacher(self._df_query, query_str, rebuild_cache)
 
     def _df_query(self, query_str: str) -> pd.DataFrame:
-        # For pandas 2.2.0
-        # https://stackoverflow.com/a/77949093
-
-        # Debugging
-        print(query_str)
-        print(self.db_engine)
         with self.db_engine.connect() as conn:
-            return pd.read_sql(query_str, conn.connection)
+            return pd.read_sql(text(query_str), conn)
 
     def query_one(self, query_str: str, rebuild_cache: bool):
         return self._with_cacher(self._query_one, query_str, rebuild_cache)
 
     def _query_one(self, query_str: str):
-        return self.db.execute(query_str).fetchone()
+        return self.db.execute(text(query_str)).fetchone()
 
     def query_all(self, query_str: str, rebuild_cache: bool):
         return self._with_cacher(self._query_all, query_str, rebuild_cache)
 
     def _query_all(self, query_str: str):
-        return self.db.execute(query_str).fetchall()
+        return self.db.execute(text(query_str)).fetchall()
 
     def _with_cacher(self, query_func, query_str: str, rebuild_cache: bool):
         if self.disable_cache and not rebuild_cache:
