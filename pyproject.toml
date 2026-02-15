@@ -1,25 +1,23 @@
 [tool.poetry]
 name = "jenfi-pipeline-data-app"
-version = "0.5.5"
+version = "0.6.0"
 description = ""
 readme = "README.md"
 authors = ["Justin Louie <224840+nitsujri@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
-python = "~3.10"
-SQLAlchemy = "^1.4.40"
-numpy = "^1.23.2"
-python-dotenv = "^0.20.0"
-psycopg2 = "^2.9.3"
-pandas = "2.2"
-boto3 = "^1.24.78"
-sqlparse = "^0.4.2"
-scikit-learn = "^1.1.2"
-sagemaker = "^2.150.0"
-statsmodels = "^0.13.5"
-jupyterlab-git = "^0.41.0"
-levenshtein = "^0.21.0"
-catboost = "^1.2.3"
+python = ">=3.10,<4.0"
+SQLAlchemy = ">=1.4.40"
+numpy = ">=1.23.2"
+python-dotenv = ">=0.20.0"
+pandas = ">=2.0"
+boto3 = ">=1.24.78"
+sqlparse = ">=0.4.2"
+
+[tool.poetry.extras]
+ml = ["scikit-learn", "statsmodels", "catboost", "sagemaker"]
+jupyter = ["jupyterlab-git", "levenshtein"]
+postgres = ["psycopg2"]
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
